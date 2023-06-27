@@ -19,7 +19,7 @@ KunJonBook is a simplified version of Facebook, designed to allow users to sign 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/username/repository.git
+git clone https://github.com/KunJon-analytics/KunJonBook.git
 ```
 
 2. Install dependencies:
