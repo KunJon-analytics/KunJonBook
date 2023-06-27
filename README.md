@@ -2,7 +2,7 @@
 
 ## Description
 
-KunJonBook is a simplified version of Facebook, designed to allow users to sign up and log in to read and write posts and chat with friends, similar to what can be done on common social networks. This project showcases the implementation of major technologies such as Apollo, Express.js, Node.js, Next.js, Sequelize, AWS ECS, and CircleCI.
+KunJonBook is a simplified version of Facebook, designed to allow users to sign up and log in to read and write posts and chat with friends, similar to what can be done on common social networks. This project showcases the implementation of major technologies such as Apollo, Express.js, Node.js, Next.js, TypeORM, AWS ECS, and CircleCI.
 
 ## Technologies Used
 
@@ -10,7 +10,7 @@ KunJonBook is a simplified version of Facebook, designed to allow users to sign 
 - Express.js
 - Node.js
 - Next.js
-- Sequelize
+- TypeORM
 - AWS ECS
 - CircleCI
 
@@ -24,10 +24,19 @@ git clone https://github.com/KunJon-analytics/KunJonBook.git
 
 2. Install dependencies:
 
-```bash
-cd repository
-npm install
-```
+   - Install `frontend` dependencies.
+
+   ```bash
+   cd KunJonBook/frontend
+   npm install
+   ```
+
+   - Install `backend` dependencies.
+
+   ```bash
+   cd KunJonBook/backend
+   npm install
+   ```
 
 3. Configure the backend:
 
@@ -49,7 +58,7 @@ cd ../frontend
 npm start
 ```
 
-6. Open your browser and navigate to `http://localhost:3000` to access the Graphbook application.
+6. Open your browser and navigate to `http://localhost:3000` to access the KunJonBook application.
 
 ## Testing
 
