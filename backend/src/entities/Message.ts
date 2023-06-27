@@ -8,10 +8,11 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { User } from "./User";
+import { Chat } from "./Chat";
 
 @ObjectType()
 @Entity()
-export class Post {
+export class Message {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id!: number;
@@ -24,8 +25,16 @@ export class Post {
   @Column()
   userId!: number;
 
+  @Field(() => Int)
+  @Column()
+  chatId!: number;
+
+  @Field(() => Chat)
+  @ManyToOne(() => Chat, (chat) => chat.messages)
+  chat!: Chat;
+
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.messages)
   user!: User;
 
   @Field(() => String)
@@ -38,7 +47,10 @@ export class Post {
 }
 
 @InputType()
-export class PostInput {
+export class MessageInput {
   @Field()
   text!: string;
+
+  @Field(() => Int)
+  chatId!: number;
 }

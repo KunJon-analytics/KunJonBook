@@ -5,39 +5,40 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   ManyToMany,
+  JoinTable,
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Post } from "./Post";
+import { User } from "./User";
 import { Message } from "./Message";
-import { Chat } from "./Chat";
 
 @ObjectType()
 @Entity()
-export class User {
+export class Chat {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Field()
-  @Column({ unique: true })
-  username!: string;
+  @Column()
+  firstName!: string;
 
   @Field()
   @Column()
-  avatar!: string;
+  lastName!: string;
 
-  @OneToMany(() => Post, (post) => post.user)
-  @Field(() => [Post], { nullable: true })
-  posts: Post[];
+  @Field()
+  @Column()
+  email!: string;
 
-  @OneToMany(() => Message, (message) => message.user)
+  @OneToMany(() => Message, (message) => message.chat)
   @Field(() => [Message], { nullable: true })
   messages: Message[];
 
-  @Field(() => [Chat], { nullable: true })
-  @ManyToMany(() => Chat, (chat) => chat.users)
-  chats: Chat[];
+  @Field(() => [User], { nullable: true })
+  @ManyToMany(() => User, (user) => user.chats)
+  @JoinTable()
+  users: User[];
 
   @Field(() => String)
   @CreateDateColumn()
@@ -49,10 +50,7 @@ export class User {
 }
 
 @InputType()
-export class UserInput {
-  @Field()
-  username!: string;
-
-  @Field()
-  avatar!: string;
+export class ChatInput {
+  @Field(() => [Int])
+  users!: number[];
 }

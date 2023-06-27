@@ -2,6 +2,7 @@ import path from "path";
 import http from "http";
 
 import "reflect-metadata";
+import dotenv from "dotenv";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { json } from "body-parser";
@@ -13,16 +14,23 @@ import cors from "cors";
 import compress from "compression";
 
 import { MyContext } from "./types";
-import { HelloResolver } from "./resolvers/hello";
+import AppDataSource from "./database";
 import { PostResolver } from "./resolvers/post";
+import { __prod__ } from "./constants";
+import { ChatResolver } from "./resolvers/chat";
+import { MessageResolver } from "./resolvers/message";
+
+dotenv.config();
 
 const root = path.join(__dirname, "../");
 
 const main = async () => {
+  const dataSource = await AppDataSource.initialize();
+
   const app = express();
 
   app.use(compress());
-  if (process.env.NODE_ENV === "production") {
+  if (__prod__) {
     app.use(helmet());
     app.use(
       helmet.contentSecurityPolicy({
@@ -46,7 +54,7 @@ const main = async () => {
   // for our httpServer.
   const apolloServer = new ApolloServer<MyContext>({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver],
+      resolvers: [PostResolver, ChatResolver, MessageResolver],
       validate: false,
     }),
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
@@ -59,7 +67,7 @@ const main = async () => {
   app.use(
     "/graphql",
     cors<cors.CorsRequest>({
-      origin: "http://localhost:3000",
+      origin: process.env.CORS_ORIGIN,
       credentials: true,
     }),
     json(),
@@ -67,6 +75,7 @@ const main = async () => {
     // an Apollo Server instance and optional configuration options
     expressMiddleware(apolloServer, {
       context: async ({ req, res }): Promise<MyContext> => ({
+        dataSource,
         req,
         res,
       }),
@@ -75,9 +84,11 @@ const main = async () => {
 
   // Modified server startup
   await new Promise<void>((resolve) =>
-    httpServer.listen({ port: 8000 }, resolve)
+    httpServer.listen({ port: process.env.PORT || 8000 }, resolve)
   );
-  console.log(`🚀 Server ready at http://localhost:8000/`);
+  console.log(
+    `🚀 Server ready at http://localhost:${process.env.PORT || 8000}/`
+  );
 };
 
 try {
