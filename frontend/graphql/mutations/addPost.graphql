@@ -1,0 +1,11 @@
+mutation AddPost($userId: Int!, $post: PostInput!) {
+  addPost(userId: $userId, post: $post) {
+    id
+    text
+    user {
+      id
+      username
+      avatar
+    }
+  }
+}

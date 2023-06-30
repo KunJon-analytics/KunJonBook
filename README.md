@@ -40,7 +40,7 @@ git clone https://github.com/KunJon-analytics/KunJonBook.git
 
 3. Configure the backend:
 
-   - Set up a MySQL database and update the connection details in `backend/config/database.js`.
+   - Set up a PostgresSQL database and update the connection details in `backend/src/database/index.ts`.
 
 4. Configure the frontend:
 
@@ -51,7 +51,7 @@ git clone https://github.com/KunJon-analytics/KunJonBook.git
 ```bash
 # Start the backend server
 cd backend
-npm start
+npm run dev
 
 # Start the frontend server
 cd ../frontend

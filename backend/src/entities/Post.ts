@@ -42,3 +42,9 @@ export class PostInput {
   @Field()
   text!: string;
 }
+
+@ObjectType()
+export class PostFeed {
+  @Field(() => [Post])
+  posts: Post[];
+}

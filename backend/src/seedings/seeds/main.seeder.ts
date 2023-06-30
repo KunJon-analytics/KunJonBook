@@ -28,7 +28,7 @@ export default class MainSeeder implements Seeder {
         .fill("")
         .map(async () => {
           const made = await chatFactory.make({
-            users: faker.helpers.arrayElements(users, { max: 10, min: 2 }),
+            users: faker.helpers.arrayElements(users, { max: 5, min: 2 }),
           });
           return made;
         })

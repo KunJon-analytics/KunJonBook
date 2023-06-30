@@ -1,0 +1,13 @@
+query Chats {
+  chats {
+    id
+    lastMessage {
+      text
+    }
+    users {
+      username
+      id
+      avatar
+    }
+  }
+}

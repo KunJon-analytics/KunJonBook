@@ -1,0 +1,17 @@
+query Chat($chatId: Int!) {
+  chat(chatId: $chatId) {
+    id
+    messages {
+      id
+      text
+      user {
+        id
+      }
+    }
+    users {
+      id
+      username
+      avatar
+    }
+  }
+}

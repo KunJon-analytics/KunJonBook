@@ -1,19 +1,39 @@
-import { Resolver, Query, Arg, Ctx, Int, Mutation } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Arg,
+  Ctx,
+  Int,
+  Mutation,
+  FieldResolver,
+  Root,
+} from "type-graphql";
 import { In } from "typeorm";
 
 import { MyContext } from "../types";
 import { Chat, ChatInput } from "../entities/Chat";
 import { User } from "../entities/User";
 import logger from "../helpers/logger";
+import { Message } from "../entities/Message";
 
 @Resolver(Chat)
 export class ChatResolver {
-  @Query(() => [Chat])
+  @FieldResolver(() => Message, { nullable: true })
+  lastMessage(@Root() chat: Chat): Message {
+    return chat.messages.sort((a, b) => b.id - a.id)[0];
+  }
+
+  @Query(() => [Chat], { nullable: true })
   async chats(@Ctx() { dataSource }: MyContext): Promise<Chat[]> {
-    const chatRepository = dataSource.getRepository(Chat);
-    const chats = await chatRepository.find({
-      relations: { messages: true, users: true },
+    const userRepository = dataSource.getRepository(User);
+    const user = await userRepository.findOne({
+      where: { id: 1 },
+      relations: { chats: { messages: true, users: true } },
     });
+    if (!user) {
+      return [];
+    }
+    const chats = user.chats;
     return chats;
   }
 
@@ -25,7 +45,7 @@ export class ChatResolver {
     const chatRepository = dataSource.getRepository(Chat);
     const chat = await chatRepository.findOne({
       where: { id: chatId },
-      relations: { messages: true, users: true },
+      relations: { messages: { user: true }, users: true },
     });
     return chat;
   }

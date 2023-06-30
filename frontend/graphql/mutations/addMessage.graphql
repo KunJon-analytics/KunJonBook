@@ -1,0 +1,9 @@
+mutation AddMessage($message: MessageInput!) {
+  addMessage(message: $message) {
+    id
+    text
+    user {
+      id
+    }
+  }
+}

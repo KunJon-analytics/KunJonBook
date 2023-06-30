@@ -1,0 +1,13 @@
+query PostsFeed($limit: Int, $page: Int) {
+  postsFeed(limit: $limit, page: $page) {
+    posts {
+      id
+      text
+      user {
+        id
+        username
+        avatar
+      }
+    }
+  }
+}
