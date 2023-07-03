@@ -1,0 +1,5 @@
+fragment UserAttributes on User {
+  username
+  avatar
+  id
+}

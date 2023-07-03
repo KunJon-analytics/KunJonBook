@@ -1,6 +1,6 @@
 import { Resolver, Query, Arg, Mutation, Ctx, Int } from "type-graphql";
 
-import { Post, PostFeed, PostInput } from "../entities/Post";
+import { DeleteResponse, Post, PostFeed, PostInput } from "../entities/Post";
 import logger from "../helpers/logger";
 import { MyContext } from "../types";
 import { User } from "../entities/User";
@@ -73,5 +73,36 @@ export class PostResolver {
 
     logger.log({ level: "info", message: "Post was created" });
     return savedUser;
+  }
+
+  @Mutation(() => DeleteResponse)
+  async deletePost(
+    @Arg("postId", () => Int) postId: number,
+    @Ctx() { dataSource }: MyContext
+  ): Promise<DeleteResponse> {
+    const postRepository = dataSource.getRepository(Post);
+    try {
+      const deleted = await postRepository.delete({ id: postId });
+      if (deleted.affected === 1) {
+        logger.log({
+          level: "info",
+          message: "Post " + postId + " was deleted",
+        });
+        return {
+          success: true,
+        };
+      }
+      return {
+        success: false,
+      };
+    } catch (err) {
+      logger.log({
+        level: "error",
+        message: err.message,
+      });
+      return {
+        success: false,
+      };
+    }
   }
 }

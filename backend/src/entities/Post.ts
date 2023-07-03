@@ -50,3 +50,9 @@ export class PostFeed {
   @Field()
   hasMore: boolean;
 }
+
+@ObjectType()
+export class DeleteResponse {
+  @Field()
+  success: boolean;
+}

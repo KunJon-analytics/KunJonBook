@@ -5,9 +5,7 @@ query PostsFeed($limit: Int, $offset: Int) {
       id
       text
       user {
-        id
-        username
-        avatar
+        ...UserAttributes
       }
     }
   }

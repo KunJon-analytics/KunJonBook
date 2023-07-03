@@ -9,9 +9,7 @@ query Chat($chatId: Int!) {
       }
     }
     users {
-      id
-      username
-      avatar
+      ...UserAttributes
     }
   }
 }

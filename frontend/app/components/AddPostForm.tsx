@@ -1,29 +1,10 @@
 "use client";
 
-import {
-  AddPostDocument,
-  AddPostMutation,
-  PostsDocument,
-  PostsQuery,
-} from "@/gql/graphql";
+import { AddPostDocument } from "@/gql/graphql";
 import styles from "../page.module.css";
-import { ApolloCache, gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import React, { useState } from "react";
-import { backendUrl } from "../constants";
-
-const updateCache = (
-  cache: ApolloCache<any>,
-  { data }: { data?: AddPostMutation | null | undefined }
-) => {
-  const oldPosts = cache.readQuery({ query: PostsDocument });
-  if (oldPosts && data) {
-    const newPosts: PostsQuery = {
-      ...oldPosts,
-      posts: [data.addPost, ...oldPosts.posts],
-    };
-    cache.writeQuery({ query: PostsDocument, data: newPosts });
-  }
-};
+import { optimisticResponse, update } from "@/graphql/mutations/addPostConfig";
 
 const AddPostForm = () => {
   const [postContent, setPostContent] = useState("");
@@ -31,44 +12,11 @@ const AddPostForm = () => {
     setPostContent("");
   };
   const [addPost] = useMutation(AddPostDocument, {
-    optimisticResponse: {
-      __typename: "Mutation",
-      addPost: {
-        __typename: "Post",
-        text: postContent,
-        id: -1,
-        user: {
-          id: -1,
-          __typename: "User",
-          username: "Loading...",
-          avatar: `${backendUrl}/uploads/avatar1.png`,
-        },
-      },
-    },
-    update(cache, { data }) {
-      if (data) {
-        cache.modify({
-          fields: {
-            postsFeed(existingPostsFeed) {
-              const { posts: existingPosts } = existingPostsFeed;
-              const newPostRef = cache.writeFragment({
-                data: data.addPost,
-                fragment: gql`
-                  fragment NewPost on Post {
-                    id
-                    type
-                  }
-                `,
-              });
-              return {
-                ...existingPostsFeed,
-                posts: [newPostRef, ...existingPosts],
-              };
-            },
-          },
-        });
-      }
-    },
+    optimisticResponse: optimisticResponse({
+      post: { text: postContent },
+      userId: -1,
+    }),
+    update,
     onCompleted: resetInput,
   });
 
