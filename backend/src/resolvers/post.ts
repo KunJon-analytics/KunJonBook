@@ -23,14 +23,16 @@ export class PostResolver {
   @Query(() => PostFeed)
   async postsFeed(
     @Ctx() { dataSource }: MyContext,
-    @Arg("page", () => Int, { nullable: true }) page: number,
+    @Arg("offset", () => Int, { nullable: true }) offset: number,
     @Arg("limit", () => Int, { nullable: true }) limit: number
   ): Promise<PostFeed> {
     const postRepository = dataSource.getRepository(Post);
     let skip = 0;
+    const realLimit = Math.min(50, limit);
+    const reaLimitPlusOne = realLimit + 1;
 
-    if (page && limit) {
-      skip = page * limit;
+    if (offset && limit) {
+      skip = offset;
     }
 
     let query: FindManyOptions<Post> = {
@@ -40,10 +42,13 @@ export class PostResolver {
     };
 
     if (limit) {
-      query.take = limit;
+      query.take = reaLimitPlusOne;
     }
     const posts = await postRepository.find(query);
-    return { posts };
+    return {
+      posts: posts.slice(0, realLimit),
+      hasMore: posts.length === reaLimitPlusOne,
+    };
   }
 
   @Mutation(() => Post)

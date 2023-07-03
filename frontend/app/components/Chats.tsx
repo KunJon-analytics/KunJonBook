@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Image from "next/image";
 import styles from "../page.module.css";
 import { backendUrl } from "../constants";
 import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
 import { ChatsDocument } from "@/gql/graphql";
 import Chat from "./Chat";
+import Loading from "../loading";
 
 const usernamesToString = (
   users: {
@@ -93,11 +94,13 @@ const Chats = () => {
       </div>
       <div className={styles["openChats"]}>
         {openChats.map((chatId, i) => (
-          <Chat
-            chatId={chatId}
-            key={"chatWindow" + chatId}
-            closeChat={closeChat}
-          />
+          <Suspense fallback={<Loading />} key={"chatWindow" + chatId}>
+            <Chat
+              chatId={chatId}
+              key={"chatWindow" + chatId}
+              closeChat={closeChat}
+            />
+          </Suspense>
         ))}
       </div>
     </div>

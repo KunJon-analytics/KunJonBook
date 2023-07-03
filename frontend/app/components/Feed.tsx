@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Image from "next/image";
 import styles from "../page.module.css";
 import {
@@ -11,47 +11,27 @@ import {
 } from "@/gql/graphql";
 import AddPostForm from "./AddPostForm";
 import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { FetchMoreFunction } from "@apollo/client";
+import { InView } from "react-intersection-observer";
+import Loading from "../loading";
 
 export default function Feed() {
   const { data, error, fetchMore } = useSuspenseQuery(PostsFeedDocument, {
-    variables: { limit: 10, page: 0 },
+    variables: { limit: 10, offset: 0 },
   });
-  const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(0);
 
-  const loadMore = (
+  const loadMore = async (
     fetchMore: FetchMoreFunction<
       PostsFeedQuery,
       Exact<{
         limit?: InputMaybe<number> | undefined;
-        page?: InputMaybe<number> | undefined;
+        offset?: InputMaybe<number> | undefined;
       }>
     >
   ) => {
     fetchMore({
       variables: {
-        page: page + 1,
-      },
-      updateQuery(previousResult, { fetchMoreResult }) {
-        if (!fetchMoreResult.postsFeed.posts.length) {
-          setHasMore(false);
-          return previousResult;
-        }
-
-        setPage(page + 1);
-
-        const newData = {
-          postsFeed: {
-            __typename: "PostFeed" as const,
-            posts: [
-              ...previousResult.postsFeed.posts,
-              ...fetchMoreResult.postsFeed.posts,
-            ],
-          },
-        };
-        return newData;
+        offset: data.postsFeed.posts.length,
       },
     });
   };
@@ -62,16 +42,7 @@ export default function Feed() {
     <>
       <AddPostForm />
       <div className={styles.feed}>
-        <InfiniteScroll
-          dataLength={data.postsFeed.posts.length}
-          next={() => loadMore(fetchMore)}
-          hasMore={hasMore}
-          loader={
-            <div className={styles.loader} key={"loader"}>
-              Loading ...
-            </div>
-          }
-        >
+        <Suspense fallback={<Loading />}>
           {data.postsFeed.posts.map((post, i) => (
             <div
               key={post.id}
@@ -91,7 +62,15 @@ export default function Feed() {
               <p className={styles.content}>{post.text}</p>
             </div>
           ))}
-        </InfiniteScroll>
+        </Suspense>
+
+        <InView
+          onChange={async (inView) => {
+            if (inView && data.postsFeed.hasMore) {
+              await loadMore(fetchMore);
+            }
+          }}
+        />
       </div>
     </>
   );

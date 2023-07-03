@@ -47,4 +47,6 @@ export class PostInput {
 export class PostFeed {
   @Field(() => [Post])
   posts: Post[];
+  @Field()
+  hasMore: boolean;
 }

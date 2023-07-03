@@ -1,5 +1,6 @@
-query PostsFeed($limit: Int, $page: Int) {
-  postsFeed(limit: $limit, page: $page) {
+query PostsFeed($limit: Int, $offset: Int) {
+  postsFeed(limit: $limit, offset: $offset) {
+    hasMore
     posts {
       id
       text

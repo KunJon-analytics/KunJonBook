@@ -46,7 +46,7 @@ const Chat = (props: { chatId: number; closeChat: (id: number) => void }) => {
 
   if (error)
     return (
-      <div className="chatWindow">
+      <div className={styles["chatWindow"]}>
         <p>{error.message}</p>
       </div>
     );
