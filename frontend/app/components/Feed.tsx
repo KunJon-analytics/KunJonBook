@@ -1,13 +1,13 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
-import Image from "next/image";
+import React, { Suspense } from "react";
+import Post from "../(post)/Index";
 import styles from "../page.module.css";
+import Error from "./Error";
 import {
-  Exact,
-  InputMaybe,
   PostsFeedDocument,
   PostsFeedQuery,
+  PostsFeedQueryVariables,
 } from "@/gql/graphql";
 import AddPostForm from "./AddPostForm";
 import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
@@ -21,13 +21,7 @@ export default function Feed() {
   });
 
   const loadMore = async (
-    fetchMore: FetchMoreFunction<
-      PostsFeedQuery,
-      Exact<{
-        limit?: InputMaybe<number> | undefined;
-        offset?: InputMaybe<number> | undefined;
-      }>
-    >
+    fetchMore: FetchMoreFunction<PostsFeedQuery, PostsFeedQueryVariables>
   ) => {
     fetchMore({
       variables: {
@@ -36,7 +30,12 @@ export default function Feed() {
     });
   };
 
-  if (error) return `Error! ${error.message}`;
+  if (error)
+    return (
+      <Error>
+        <p>{error.message}</p>
+      </Error>
+    );
 
   return (
     <>
@@ -44,23 +43,7 @@ export default function Feed() {
       <div className={styles.feed}>
         <Suspense fallback={<Loading />}>
           {data.postsFeed.posts.map((post, i) => (
-            <div
-              key={post.id}
-              className={`${styles.post} ${
-                post.id < 0 ? styles.optimistic : styles.nada
-              }`}
-            >
-              <div className={styles.header}>
-                <Image
-                  src={post.user.avatar}
-                  alt={post.user.username}
-                  width={50}
-                  height={50}
-                />
-                <h2>{post.user.username}</h2>
-              </div>
-              <p className={styles.content}>{post.text}</p>
-            </div>
+            <Post post={post} key={post.id} />
           ))}
         </Suspense>
 
