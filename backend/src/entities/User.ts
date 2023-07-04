@@ -56,3 +56,9 @@ export class UserInput {
   @Field()
   avatar!: string;
 }
+
+@ObjectType()
+export class UsersSearch {
+  @Field(() => [User])
+  users: User[];
+}

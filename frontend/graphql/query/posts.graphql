@@ -3,9 +3,7 @@ query Posts {
     id
     text
     user {
-      id
-      username
-      avatar
+      ...UserAttributes
     }
   }
 }

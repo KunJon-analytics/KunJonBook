@@ -19,6 +19,7 @@ import { PostResolver } from "./resolvers/post";
 import { __prod__ } from "./constants";
 import { ChatResolver } from "./resolvers/chat";
 import { MessageResolver } from "./resolvers/message";
+import { UserResolver } from "./resolvers/user";
 
 dotenv.config();
 
@@ -54,7 +55,7 @@ const main = async () => {
   // for our httpServer.
   const apolloServer = new ApolloServer<MyContext>({
     schema: await buildSchema({
-      resolvers: [PostResolver, ChatResolver, MessageResolver],
+      resolvers: [PostResolver, ChatResolver, MessageResolver, UserResolver],
       validate: false,
     }),
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],

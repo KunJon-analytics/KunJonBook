@@ -19,8 +19,9 @@ const documents = {
     "mutation DeletePost($postId: Int!) {\n  deletePost(postId: $postId) {\n    success\n  }\n}": types.DeletePostDocument,
     "query Chat($chatId: Int!) {\n  chat(chatId: $chatId) {\n    id\n    messages {\n      id\n      text\n      user {\n        id\n      }\n    }\n    users {\n      ...UserAttributes\n    }\n  }\n}": types.ChatDocument,
     "query Chats {\n  chats {\n    id\n    lastMessage {\n      text\n    }\n    users {\n      ...UserAttributes\n    }\n  }\n}": types.ChatsDocument,
-    "query Posts {\n  posts {\n    id\n    text\n    user {\n      id\n      username\n      avatar\n    }\n  }\n}": types.PostsDocument,
+    "query Posts {\n  posts {\n    id\n    text\n    user {\n      ...UserAttributes\n    }\n  }\n}": types.PostsDocument,
     "query PostsFeed($limit: Int, $offset: Int) {\n  postsFeed(limit: $limit, offset: $offset) {\n    hasMore\n    posts {\n      id\n      text\n      user {\n        ...UserAttributes\n      }\n    }\n  }\n}": types.PostsFeedDocument,
+    "query UsersSearch($text: String!, $limit: Int, $page: Int) {\n  usersSearch(text: $text, limit: $limit, page: $page) {\n    users {\n      ...UserAttributes\n    }\n  }\n}": types.UsersSearchDocument,
 };
 
 /**
@@ -64,11 +65,15 @@ export function graphql(source: "query Chats {\n  chats {\n    id\n    lastMessa
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Posts {\n  posts {\n    id\n    text\n    user {\n      id\n      username\n      avatar\n    }\n  }\n}"): (typeof documents)["query Posts {\n  posts {\n    id\n    text\n    user {\n      id\n      username\n      avatar\n    }\n  }\n}"];
+export function graphql(source: "query Posts {\n  posts {\n    id\n    text\n    user {\n      ...UserAttributes\n    }\n  }\n}"): (typeof documents)["query Posts {\n  posts {\n    id\n    text\n    user {\n      ...UserAttributes\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "query PostsFeed($limit: Int, $offset: Int) {\n  postsFeed(limit: $limit, offset: $offset) {\n    hasMore\n    posts {\n      id\n      text\n      user {\n        ...UserAttributes\n      }\n    }\n  }\n}"): (typeof documents)["query PostsFeed($limit: Int, $offset: Int) {\n  postsFeed(limit: $limit, offset: $offset) {\n    hasMore\n    posts {\n      id\n      text\n      user {\n        ...UserAttributes\n      }\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query UsersSearch($text: String!, $limit: Int, $page: Int) {\n  usersSearch(text: $text, limit: $limit, page: $page) {\n    users {\n      ...UserAttributes\n    }\n  }\n}"): (typeof documents)["query UsersSearch($text: String!, $limit: Int, $page: Int) {\n  usersSearch(text: $text, limit: $limit, page: $page) {\n    users {\n      ...UserAttributes\n    }\n  }\n}"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

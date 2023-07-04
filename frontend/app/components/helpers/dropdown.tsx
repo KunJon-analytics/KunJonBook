@@ -33,14 +33,12 @@ const Dropdown = ({
   return (
     <div className={styles.dropdown}>
       <div>
-        <div
-          className={styles.trigger}
-          ref={wrapperRef}
-          onClick={() => setShow(!show)}
-        >
+        <div className={styles.trigger} onClick={() => setShow(!show)}>
           {trigger}
         </div>
-        <div>{show && <div className={styles.content}>{children}</div>}</div>
+        <div ref={wrapperRef}>
+          {show && <div className={styles.content}>{children}</div>}
+        </div>
       </div>
     </div>
   );

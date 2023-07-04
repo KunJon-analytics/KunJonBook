@@ -1,0 +1,7 @@
+query UsersSearch($text: String!, $limit: Int, $page: Int) {
+  usersSearch(text: $text, limit: $limit, page: $page) {
+    users {
+      ...UserAttributes
+    }
+  }
+}
